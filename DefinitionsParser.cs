@@ -47,7 +47,7 @@ namespace Parser {
 				}
 			}
 			return $@"<?xml version='1.0' encoding='utf-8' ?>
-			<oval-definitions xmlns='http://oval.mitre.org/XMLSchema/oval-definitions-5'
+			<oval_definitions xmlns='http://oval.mitre.org/XMLSchema/oval-definitions-5'
 			xmlns:oval='http://oval.mitre.org/XMLSchema/oval-common-5' 
 			xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
 			xsi:schemaLocation='http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd	http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd'>
@@ -58,7 +58,7 @@ namespace Parser {
 				<definitions>
 					{string.Join('\n', parsedXml)}
 				</definitions>
-			</oval-definitions>";
+			</oval_definitions>";
 		}
 	}
 }
