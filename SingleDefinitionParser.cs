@@ -50,7 +50,6 @@ namespace Parser {
 		private List<Dictionary<string, string>> ParseReferences() {
 			List<Dictionary<string, string>> references = new();
 			HtmlNodeCollection? referencesNodes = pageHtml.SelectNodes("//div[@class='definition']/div[2]//div[@class='dxnb-content']/div");
-			Console.WriteLine(referencesNodes.Count);
 			if (referencesNodes != null) {
 				foreach (HtmlNode referenceNode in referencesNodes) {
 					HtmlNode? referenceIdNode = referenceNode.SelectSingleNode("./div[1]");
@@ -66,7 +65,6 @@ namespace Parser {
 					}
 				}
 			}
-			Console.WriteLine(references.Count);
 			return references;
 		}
 

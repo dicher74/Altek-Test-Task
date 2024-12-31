@@ -26,7 +26,6 @@ namespace Parser {
 			Console.WriteLine("end page: " + endPage);
 
 			for (int currentPage = startPage; currentPage <= endPage; currentPage++) {
-				Console.WriteLine("current page num: " + currentPage);
 				var currentPageUrl = startUrl 
 					+ "?seoctl00_MainContent_ASPxGridViewReferences=page" 
 					+ currentPage.ToString();

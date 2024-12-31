@@ -24,15 +24,16 @@ try {
 	await cmd.ExecuteNonQueryAsync();	
 
 	string parsedXml = new MainParser().GetXml();
-	Console.Write(parsedXml);
-
 	NpgsqlParameter parameter = new NpgsqlParameter<string> ("@xmlContent", NpgsqlDbType.Xml);
 	parameter.Value = parsedXml;
+	Console.Write(parsedXml);
 
 	cmd.CommandText = "INSERT INTO DefinitionType (content) VALUES (@xmlContent)";
 	cmd.Parameters.Add(parameter);
-
 	await cmd.ExecuteNonQueryAsync();
+
+	Console.WriteLine();
+	Console.WriteLine("xml successfuly saved");
 }
 catch (Exception e){
 	Console.WriteLine(e);
