@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
+using Versions;
 
 namespace Parser
 {
@@ -40,9 +41,8 @@ namespace Parser
 			return new List<string>();
 		}
 
-		private Dictionary<string, List<string>> ParseVersion()
+		private AllVersionsInfo ParseVersion()
 		{
-			VersionParser.Print(VersionParser.GetVersions(ParseDescription()));
 			return VersionParser.GetVersions(ParseDescription());
 		}
 
@@ -67,15 +67,12 @@ namespace Parser
 			var description = ParseDescription();
 			var references = ParseReferences();
 
-			if (true)
-			{
-				Console.WriteLine();
-				Console.WriteLine(pageHtml.SelectSingleNode("//div[@class='main-content']/div[2]/h4").InnerText);
-				Console.WriteLine();
-				Console.WriteLine(description);
-				Console.WriteLine();
-				ParseVersion();
-			}
+			Console.WriteLine();
+			Console.WriteLine(pageHtml.SelectSingleNode("//div[@class='main-content']/div[2]/h4").InnerText);
+			Console.WriteLine();
+			Console.WriteLine(description);
+			Console.WriteLine();
+			ParseVersion();
 			{
 				List<string> XmlProducts = new();
 				List<string> XmlPlatforms = new();
