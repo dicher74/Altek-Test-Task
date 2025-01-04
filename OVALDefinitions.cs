@@ -2,7 +2,7 @@ namespace OVALObjects
 {
 	public class Criterion
 	{
-		int testRef;
+		readonly int testRef;
 		public Criterion(int testRef)
 		{
 			this.testRef = testRef;
@@ -14,9 +14,9 @@ namespace OVALObjects
 	}
 	public class Criteria
 	{
-		List<Criteria> children = new();
-		List<Criterion> criterions = new();
-		string operator_;
+		readonly List<Criteria> children = new();
+		readonly List<Criterion> criterions = new();
+		readonly string operator_;
 		public Criteria(string operator_)
 		{
 			this.operator_ = operator_;
@@ -69,12 +69,12 @@ namespace OVALObjects
 	}
 	public class Definition
 	{
-		int Id;
-		string title;
-		string description;
-		List<string> Refs;
-		Criteria criteria;
-		List<string> testResfs = new();
+		readonly int Id;
+		readonly string title;
+		readonly string description;
+		readonly List<string> Refs;
+		readonly Criteria criteria;
+		readonly List<string> testResfs = new();
 		public Definition(string title, string description, int id, List<string> Refs, Criteria criteria)
 		{
 			this.Refs = Refs;

@@ -4,8 +4,8 @@ namespace OVALObjects
 {
 	public class State
 	{
-		string version;
-		string operation;
+		readonly string version;
+		readonly string operation;
 		public int Id;
 		public State(string operation, string version, int id)
 		{
@@ -28,9 +28,9 @@ namespace OVALObjects
 	}
 	public class Object
 	{
-		string hive;
-		string key;
-		string name;
+		readonly string hive;
+		readonly string key;
+		readonly string name;
 		public int Id;
 		public Object(string hive, string key, string name, int id)
 		{
@@ -56,9 +56,9 @@ namespace OVALObjects
 	}
 	public class Test
 	{
-		string check;
-		List<int> steRefs = new();
-		List<int> objRefs = new();
+		readonly string check;
+		readonly List<int> steRefs = new();
+		readonly List<int> objRefs = new();
 		public int Id;
 		public void AddObject(Object object_)
 		{
@@ -99,10 +99,10 @@ namespace OVALObjects
 	}
 	public class OVAL
 	{
-		List<Definition> definitions = new();
-		List<State> states = new();
-		Object object_ = new(@"HKEY_LOCAL_MACHINE", @"SOFTWARE\Grafana", @"Version", 1);
-		List<Test> tests = new();
+		readonly List<Definition> definitions = new();
+		readonly List<State> states = new();
+		readonly Object object_ = new(@"HKEY_LOCAL_MACHINE", @"SOFTWARE\Grafana", @"Version", 1);
+		readonly List<Test> tests = new();
 		int defId = 1, steId = 1, tstId = 1;
 
 		public void AddDefinition(string title, string description, List<string> CVE, AllVersionsInfo versions)

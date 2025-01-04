@@ -6,7 +6,7 @@ using Parser;
 using Tommy;
 
 
-TomlNode dbConfig = TOML.Parse(File.OpenText("config.toml"))["db"];
+TomlNode dbConfig = TOML.Parse(File.OpenText("../../../config.toml"))["db"];
 var con = new NpgsqlConnection(
 	connectionString: $"Server={dbConfig["host"]};" +
 		$"Port={dbConfig["port"]};" +
