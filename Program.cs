@@ -1,4 +1,7 @@
-﻿using Npgsql;
+﻿using System.Reflection.Metadata;
+using System.Xml;
+using Npgsql;
+using NpgsqlTypes;
 using Parser;
 using Tommy;
 
@@ -23,17 +26,23 @@ try
 			"content XML)";
 	await cmd.ExecuteNonQueryAsync();
 
-	new MainParser().GetXml();
-	// NpgsqlParameter parameter = new NpgsqlParameter<string>("@xmlContent", NpgsqlDbType.Xml);
-	// parameter.Value = parsedXml;
-	// Console.Write(parsedXml);
+	Console.Write("Definitions collecting ");
+	var parsedXml = new MainParser().GetXml();
 
-	// cmd.CommandText = "INSERT INTO DefinitionType (content) VALUES (@xmlContent)";
-	// cmd.Parameters.Add(parameter);
-	// await cmd.ExecuteNonQueryAsync();
+	NpgsqlParameter parameter = new NpgsqlParameter<string>("@xmlContent", NpgsqlDbType.Xml)
+	{
+		Value = parsedXml
+	};
+	XmlDocument xmlDoc = new();
+	xmlDoc.LoadXml(parsedXml);
+	xmlDoc.Save("definitions.xml");
 
-	// Console.WriteLine();
-	// Console.WriteLine("xml successfuly saved");
+	cmd.CommandText = "INSERT INTO DefinitionType (content) VALUES (@xmlContent)";
+	cmd.Parameters.Add(parameter);
+	await cmd.ExecuteNonQueryAsync();
+
+	Console.WriteLine();
+	Console.WriteLine("xml successfuly saved");
 }
 catch (Exception e)
 {

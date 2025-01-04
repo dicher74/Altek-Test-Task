@@ -53,10 +53,12 @@ namespace OVALObjects
 		int Id;
 		string title;
 		string description;
+		List<string> Refs;
 		Criteria criteria;
 		List<string> testResfs = new();
-		public Definition(string title, string description, int id, Criteria criteria)
+		public Definition(string title, string description, int id, List<string> Refs, Criteria criteria)
 		{
+			this.Refs = Refs;
 			this.criteria = criteria;
 			this.title = title;
 			this.description = description;
@@ -72,11 +74,17 @@ namespace OVALObjects
 		}
 		public string GetXml()
 		{
+			List<string> referncesXml = new();
+			foreach (string CVEnum in Refs)
+			{
+				referncesXml.Add(@$"<reference source='CVE' ref_id='{CVEnum}' />");
+			}
 			return
 				@$"<definition id='{GetRef(Id)}' version='1'>
 						<metadata>
 							<title>{title}</title>
 							<description>{description.Replace("&", "").Replace("<", "&lt;")}</description>
+							{string.Join('\n', referncesXml)}
 						</metadata>
 						{criteria.GetXml()}
 					</definition>";

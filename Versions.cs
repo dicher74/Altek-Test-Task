@@ -74,7 +74,7 @@ namespace Versions
 
 	public class VersionInfo
 	{
-		private readonly List<string> From, To;
+		public readonly List<string> From, To;
 		public VersionInfo(List<string> From, List<string> To)
 		{
 			this.From = From;
@@ -102,8 +102,8 @@ namespace Versions
 
 	public class AllVersionsInfo
 	{
-		private readonly List<VersionInfo> affected = new();
-		private readonly List<VersionInfo> notAffected = new();
+		public readonly List<VersionInfo> affected = new();
+		public readonly List<VersionInfo> notAffected = new();
 		public void AddAffectedVersion(VersionInfo info)
 		{
 			if (!info.IsEmpty())

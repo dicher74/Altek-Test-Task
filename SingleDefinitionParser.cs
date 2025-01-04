@@ -1,5 +1,8 @@
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
+using Microsoft.VisualBasic;
+using OVALObjects;
 using Versions;
 
 namespace Parser
@@ -24,84 +27,31 @@ namespace Parser
 
 			Regex tags = new(tagPattern, RegexOptions.Singleline);
 			Regex fixLt = new(ltPattern, RegexOptions.Singleline);
-			string description = fixLt.Replace(tags.Replace(descriptionHtml, " "), "<").Replace("\n", " ").Replace(". ", "! ");
+			string description = fixLt.Replace(tags.Replace(descriptionHtml, " "), "<");
 
 			return description;
-		}
-		private string ParseFamily()
-		{
-			return "unix";
-		}
-		private static List<string> ParseProducts()
-		{
-			return new List<string> { "Grafana" };
-		}
-		private List<string> ParsePlatforms()
-		{
-			return new List<string>();
 		}
 
 		private AllVersionsInfo ParseVersion()
 		{
-			return VersionParser.GetVersions(ParseDescription());
+			string description = ParseDescription().Replace("\n", " ").Replace(". ", "! ");
+			return VersionParser.GetVersions(description);
 		}
 
-		private List<Dictionary<string, string>> ParseReferences()
+		private List<string> ParseReferences()
 		{
 			string cveTitle = pageHtml.SelectSingleNode("//div[@class='main-content']/div[2]/h4").InnerText;
 
-			return new List<Dictionary<string, string>> {
-				new() {
-					{"referenceId", "1"},
-					{"referenceHref", $"https://www.cve.org/CVERecord?id={cveTitle}"}
-				}
-			};
+			return new List<string> { cveTitle.Split(": ")[1] };
 		}
 
-		public string CreateOvalDefinition(int id)
+		public void AddOvalDefinitionTo(OVAL ovalObj)
 		{
-			var products = ParseProducts();
-			var platforms = ParsePlatforms();
 			var title = ParseTitle();
-			var family = ParseFamily();
 			var description = ParseDescription();
 			var references = ParseReferences();
-
-			Console.WriteLine();
-			Console.WriteLine(pageHtml.SelectSingleNode("//div[@class='main-content']/div[2]/h4").InnerText);
-			Console.WriteLine();
-			Console.WriteLine(description);
-			Console.WriteLine();
-			ParseVersion();
-			{
-				List<string> XmlProducts = new();
-				List<string> XmlPlatforms = new();
-				List<string> XmlReferences = new();
-				foreach (string product in products)
-				{
-					XmlProducts.Add($"<product> {product} </product>");
-				}
-				foreach (string platform in platforms)
-				{
-					XmlPlatforms.Add($"<platform> {platform} </platform>");
-				}
-				foreach (Dictionary<string, string> reference in references)
-				{
-					XmlReferences.Add($"<reference source='CVE' ref_id='{reference["referenceId"]}' ref_url='{reference["referenceHref"]}' />");
-				}
-				return $@"
-				<definition id='oval:test:def:{id}' version='1' class='vulnerability'>
-					<metadata>
-						<title> {title} </title>
-						<affected family='{family}'>
-							{string.Join("\n", XmlPlatforms)}
-							{string.Join("\n", XmlProducts)}
-						</affected>
-						{string.Join("\n", XmlReferences)}
-						<description> {description} </description>
-					</metadata>
-				</definition>";
-			}
+			var allVersionsInfo = ParseVersion();
+			ovalObj.AddDefinition(title, description, references, allVersionsInfo);
 		}
 	}
 }
