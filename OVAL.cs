@@ -20,8 +20,9 @@ namespace OVALObjects
 		public string GetXml()
 		{
 			return
-			@$"<registry_state id='{GetRef(Id)}' version='1'>
-						<version operation='{operation}'>{version}</version>
+			@$"<registry_state id='{GetRef(Id)}' version='1' 
+					xmlns='http://oval.mitre.org/XMLSchema/oval-definitions-5#windows'>
+						<value datatype='version' operation='{operation}'>{version}</value>
 					</registry_state>";
 		}
 	}
@@ -45,7 +46,8 @@ namespace OVALObjects
 		public string GetXml()
 		{
 			return
-				@$"<registry_object id='{GetRef(Id)}' version='1'>
+				@$"<registry_object id='{GetRef(Id)}' version='1'
+					xmlns='http://oval.mitre.org/XMLSchema/oval-definitions-5#windows'>
 						<hive>{hive}</hive>
 						<key>{key}</key>
 						<name>{name}</name>
@@ -87,10 +89,12 @@ namespace OVALObjects
 				stateRefsXml.Add(@$"<state state_ref='{State.GetRef(stateRef)}' />");
 			}
 			return
-				@$"<test id='{GetRef(Id)}' version='1' check='{check}'>
-						{string.Join('\n', objectRefsXml)}
+				@$"<registry_test id='{GetRef(Id)}' version='1' check='{check}' 
+				comment='version test'
+				xmlns='http://oval.mitre.org/XMLSchema/oval-definitions-5#windows'>
+			{string.Join('\n', objectRefsXml)}
 						{string.Join('\n', stateRefsXml)}
-					</test>";
+					</registry_test>";
 		}
 	}
 	public class OVAL
@@ -178,14 +182,16 @@ namespace OVALObjects
 			}
 			return
 				$@"<?xml version='1.0' encoding='utf-8' ?>
-			<oval_definitions xmlns='http://oval.mitre.org/XMLSchema/oval-definitions-5'
+			<oval_definitions 
+			xmlns='http://oval.mitre.org/XMLSchema/oval-definitions-5'
 			xmlns:oval='http://oval.mitre.org/XMLSchema/oval-common-5' 
 			xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-			xsi:schemaLocation='http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd	
-			http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd'>
+		xsi:schemaLocation='{"http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd " +
+			 "http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd " +
+			 "http://oval.mitre.org/XMLSchema/oval-definitions-5#windows windows-definitions-schema.xsd"}'>
 				<generator>
-					<oval:schema_version>5.3</oval:schema_version>
-					<oval:timestamp>2024-12-31T03:43:03</oval:timestamp>
+					<oval:schema_version>5.10</oval:schema_version>
+					<oval:timestamp>{DateTime.Now:s}</oval:timestamp>
 				</generator>
 				<definitions>
 					{string.Join('\n', definitionsXml)}
@@ -194,7 +200,7 @@ namespace OVALObjects
 					{string.Join('\n', testsXml)}
 				</tests>
 				<objects>
-					{object_.GetXml}
+					{object_.GetXml()}
 				</objects>
 				<states>
 					{string.Join('\n', statesXml)}
