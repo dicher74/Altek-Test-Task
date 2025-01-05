@@ -3,7 +3,3 @@ host='localhost'
 port=5432
 user='postgres'
 password=''
-
-[pages]
-start=1
-end=1
