@@ -2,14 +2,14 @@ namespace OVALObjects
 {
 	public class Criterion
 	{
-		readonly int testRef;
-		public Criterion(int testRef)
+		private Test test;
+		public Criterion(Test test)
 		{
-			this.testRef = testRef;
+			this.test = test;
 		}
 		public string GetXml()
 		{
-			return @$"<criterion test_ref='{Test.GetRef(testRef)}' />";
+			return @$"<criterion test_ref='{test.GetRef()}' />";
 		}
 	}
 	public class Criteria
@@ -74,15 +74,15 @@ namespace OVALObjects
 					</criteria>";
 		}
 	}
-	public class Definition
+	public class Definition : OVALObject
 	{
-		readonly int Id;
 		readonly string title;
 		readonly string description;
 		readonly List<string> Refs;
 		readonly Criteria criteria;
 		readonly List<string> testResfs = new();
 		public Definition(string title, string description, int id, List<string> Refs, Criteria criteria)
+			: base(id, OVALObjectType.def)
 		{
 			this.Refs = Refs;
 			this.criteria = criteria;
@@ -90,13 +90,9 @@ namespace OVALObjects
 			this.description = description;
 			Id = id;
 		}
-		public void AddTest(int id)
+		public void AddTest(Test test)
 		{
-			testResfs.Add(Test.GetRef(id));
-		}
-		public string GetRef(int id)
-		{
-			return @$"oval:{OVAL.namespace_}:def:{id}";
+			testResfs.Add(test.GetRef());
 		}
 		public string GetXml()
 		{
@@ -106,7 +102,7 @@ namespace OVALObjects
 				referncesXml.Add(@$"<reference source='CVE' ref_id='{CVEnum}' />");
 			}
 			return
-				@$"<definition id='{GetRef(Id)}' version='1' class='vulnerability'>
+				@$"<definition id='{GetRef()}' version='1' class='vulnerability'>
 						<metadata>
 							<title>{title}</title>
 							<description>{description.Replace("&", "").Replace("<", "&lt;")}</description>

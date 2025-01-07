@@ -1,52 +1,64 @@
+using System.Data.Common;
 using Versions;
 
 namespace OVALObjects
 {
-	public class State
+	public enum OVALObjectType
+	{
+		def,
+		tst,
+		ste,
+		obj
+	}
+	public class OVALObject
+	{
+		public int Id;
+		private readonly OVALObjectType type_;
+		public OVALObject(int Id, OVALObjectType type_)
+		{
+			this.Id = Id;
+			this.type_ = type_;
+		}
+		public string GetRef()
+		{
+			return @$"oval:{OVAL.namespace_}:{type_}:{Id}";
+		}
+	}
+	public class State : OVALObject
 	{
 		readonly string version;
 		readonly string operation;
-		public int Id;
 		public State(string operation, string version, int id)
+			: base(id, OVALObjectType.ste)
 		{
 			this.version = version;
 			this.operation = operation;
-			Id = id;
-		}
-		public static string GetRef(int id)
-		{
-			return @$"oval:{OVAL.namespace_}:ste:{id}";
 		}
 		public string GetXml()
 		{
 			return
-			@$"<registry_state id='{GetRef(Id)}' version='1' 
+			@$"<registry_state id='{GetRef()}' version='1' 
 					xmlns='http://oval.mitre.org/XMLSchema/oval-definitions-5#windows'>
 						<value datatype='version' operation='{operation}'>{version}</value>
 					</registry_state>";
 		}
 	}
-	public class Object
+	public class Object : OVALObject
 	{
 		readonly string hive;
 		readonly string key;
 		readonly string name;
-		public int Id;
 		public Object(string hive, string key, string name, int id)
+			: base(id, OVALObjectType.obj)
 		{
 			this.hive = hive;
 			this.key = key;
 			this.name = name;
-			Id = id;
-		}
-		public static string GetRef(int id)
-		{
-			return @$"oval:{OVAL.namespace_}:obj:{id}";
 		}
 		public string GetXml()
 		{
 			return
-				@$"<registry_object id='{GetRef(Id)}' version='1'
+				@$"<registry_object id='{GetRef()}' version='1'
 					xmlns='http://oval.mitre.org/XMLSchema/oval-definitions-5#windows'>
 						<hive>{hive}</hive>
 						<key>{key}</key>
@@ -54,44 +66,31 @@ namespace OVALObjects
 					</registry_object>";
 		}
 	}
-	public class Test
+	public class Test : OVALObject
 	{
 		readonly string check;
-		readonly List<int> steRefs = new();
-		readonly List<int> objRefs = new();
-		public int Id;
-		public void AddObject(Object object_)
-		{
-			objRefs.Add(object_.Id);
-		}
-		public void AddState(State state)
-		{
-			steRefs.Add(state.Id);
-		}
+		readonly List<State> states = new();
+		readonly List<Object> objects = new();
 		public Test(int id, string check, Object object_, State state)
+			: base(id, OVALObjectType.tst)
 		{
-			Id = id;
 			this.check = check;
-			objRefs.Add(object_.Id);
-			steRefs.Add(state.Id);
-		}
-		public static string GetRef(int id)
-		{
-			return @$"oval:{OVAL.namespace_}:tst:{id}";
+			objects.Add(object_);
+			states.Add(state);
 		}
 		public string GetXml()
 		{
 			List<string> objectRefsXml = new(), stateRefsXml = new();
-			foreach (var objectRef in objRefs)
+			foreach (var object_ in objects)
 			{
-				objectRefsXml.Add(@$"<object object_ref='{Object.GetRef(objectRef)}' />");
+				objectRefsXml.Add(@$"<object object_ref='{object_.GetRef()}' />");
 			}
-			foreach (var stateRef in steRefs)
+			foreach (var state in states)
 			{
-				stateRefsXml.Add(@$"<state state_ref='{State.GetRef(stateRef)}' />");
+				stateRefsXml.Add(@$"<state state_ref='{state.GetRef()}' />");
 			}
 			return
-				@$"<registry_test id='{GetRef(Id)}' version='1' check='{check}' 
+				@$"<registry_test id='{GetRef()}' version='1' check='{check}' 
 				comment='version test'
 				xmlns='http://oval.mitre.org/XMLSchema/oval-definitions-5#windows'>
 			{string.Join('\n', objectRefsXml)}
@@ -121,9 +120,9 @@ namespace OVALObjects
 			foreach (string version in versions)
 			{
 				State state = new(operation, version, steId++);
-				states.Add(state);
-				tests.Add(new(tstId, "all", object_, state));
-				response.Add(new(tstId++));
+				Test test = new(tstId++, "all", object_, state);
+				states.Add(state); tests.Add(test);
+				response.Add(new(test));
 			}
 			return response;
 		}
