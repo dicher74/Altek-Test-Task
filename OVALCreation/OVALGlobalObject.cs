@@ -1,5 +1,7 @@
 using System.Data.Common;
+using VersionOperations;
 using Versions;
+
 
 namespace OVALObjects
 {
@@ -131,11 +133,21 @@ namespace OVALObjects
 		private Criteria CreateCriteria(AllVersionsInfo info)
 		{
 			Criteria newCriteria = new("AND");
-			Criteria NotAffectedCriteria = new("OR");
+			Criteria NotAffectedCriteria = new("AND");
 			Criteria AffectedCriteria = new("OR");
 			foreach (var versionInfo in info.notAffected)
 			{
-				NotAffectedCriteria.AddCriterions(CreateCriterionSet(versionInfo.From, "less than"));
+				foreach (var version in versionInfo.From)
+				{
+					Criteria NotAffectedCriteriaElem = new("OR");
+
+					NotAffectedCriteriaElem.AddCriterions(CreateCriterionSet(
+					new() { BranchFinder.FindBranchForSingleVersion(version, versionInfo.From) }, "greater than or equal"));
+
+					NotAffectedCriteriaElem.AddCriterions(CreateCriterionSet(
+						new() { version }, "less than"));
+					NotAffectedCriteria.AddChild(NotAffectedCriteriaElem);
+				}
 			}
 			foreach (var versionInfo in info.affected)
 			{
