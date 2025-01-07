@@ -15,7 +15,7 @@ namespace OVALObjects
 		}
 		public static string GetRef(int id)
 		{
-			return @$"oval:test:ste:{id}";
+			return @$"oval:{OVAL.namespace_}:ste:{id}";
 		}
 		public string GetXml()
 		{
@@ -41,7 +41,7 @@ namespace OVALObjects
 		}
 		public static string GetRef(int id)
 		{
-			return @$"oval:test:obj:{id}";
+			return @$"oval:{OVAL.namespace_}:obj:{id}";
 		}
 		public string GetXml()
 		{
@@ -75,7 +75,7 @@ namespace OVALObjects
 		}
 		public static string GetRef(int id)
 		{
-			return @$"oval:test:tst:{id}";
+			return @$"oval:{OVAL.namespace_}:tst:{id}";
 		}
 		public string GetXml()
 		{
@@ -99,6 +99,7 @@ namespace OVALObjects
 	}
 	public class OVAL
 	{
+		public static readonly string namespace_ = "test";
 		readonly List<Definition> definitions = new();
 		readonly List<State> states = new();
 		readonly Object object_ = new(@"HKEY_LOCAL_MACHINE", @"SOFTWARE\Grafana", @"Version", 1);
@@ -127,9 +128,9 @@ namespace OVALObjects
 					newTest.AddState(newState);
 					states.Add(newState);
 					tests.Add(newTest);
+					NotAffectedCriteria.AddCriterion(new(tstId));
 					steId++;
 					tstId++;
-					NotAffectedCriteria.AddCriterion(new(tstId));
 				}
 			}
 			foreach (var versionInfo in info.affected)
@@ -143,9 +144,9 @@ namespace OVALObjects
 					newTest.AddState(newState);
 					states.Add(newState);
 					tests.Add(newTest);
+					AffectedCriteriaElem.AddCriterion(new(tstId));
 					tstId++;
 					steId++;
-					AffectedCriteriaElem.AddCriterion(new(tstId));
 				}
 				foreach (var versionTo in versionInfo.To)
 				{
@@ -155,9 +156,9 @@ namespace OVALObjects
 					newTest.AddState(newState);
 					states.Add(newState);
 					tests.Add(newTest);
+					AffectedCriteriaElem.AddCriterion(new(tstId));
 					tstId++;
 					steId++;
-					AffectedCriteriaElem.AddCriterion(new(tstId));
 				}
 				AffectedCriteria.AddChild(AffectedCriteriaElem);
 			}

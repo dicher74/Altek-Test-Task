@@ -89,7 +89,7 @@ namespace OVALObjects
 		}
 		public string GetRef(int id)
 		{
-			return @$"oval:test:def:{id}";
+			return @$"oval:{OVAL.namespace_}:def:{id}";
 		}
 		public string GetXml()
 		{
@@ -99,7 +99,7 @@ namespace OVALObjects
 				referncesXml.Add(@$"<reference source='CVE' ref_id='{CVEnum}' />");
 			}
 			return
-				@$"<definition id='{GetRef(Id)}' version='1' class='vulnerability' result='true'>
+				@$"<definition id='{GetRef(Id)}' version='1' class='vulnerability'>
 						<metadata>
 							<title>{title}</title>
 							<description>{description.Replace("&", "").Replace("<", "&lt;")}</description>
