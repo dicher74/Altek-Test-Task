@@ -26,8 +26,8 @@ namespace OVALObjects
 	}
 	public class State : OVALObject
 	{
-		readonly string version;
-		readonly string operation;
+		public readonly string version;
+		public readonly string operation;
 		public State(string operation, string version, int id)
 			: base(id, OVALObjectType.ste)
 		{
@@ -71,9 +71,11 @@ namespace OVALObjects
 		readonly string check;
 		readonly List<State> states = new();
 		readonly List<Object> objects = new();
+		public string comment;
 		public Test(int id, string check, Object object_, State state)
 			: base(id, OVALObjectType.tst)
 		{
+			comment = $"Grafana version is {state.operation} {state.version}";
 			this.check = check;
 			objects.Add(object_);
 			states.Add(state);
@@ -91,7 +93,7 @@ namespace OVALObjects
 			}
 			return
 				@$"<registry_test id='{GetRef()}' version='1' check='{check}' 
-				comment='version test'
+				comment='{comment}'
 				xmlns='http://oval.mitre.org/XMLSchema/oval-definitions-5#windows'>
 			{string.Join('\n', objectRefsXml)}
 						{string.Join('\n', stateRefsXml)}

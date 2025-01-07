@@ -9,7 +9,7 @@ namespace OVALObjects
 		}
 		public string GetXml()
 		{
-			return @$"<criterion test_ref='{test.GetRef()}' />";
+			return @$"<criterion test_ref='{test.GetRef()}' comment='{test.comment}'/>";
 		}
 	}
 	public class Criteria
