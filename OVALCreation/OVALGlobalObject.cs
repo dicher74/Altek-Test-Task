@@ -68,10 +68,12 @@ namespace OVALObjects
 		{
 			steRefs.Add(state.Id);
 		}
-		public Test(int id, string check)
+		public Test(int id, string check, Object object_, State state)
 		{
 			Id = id;
 			this.check = check;
+			objRefs.Add(object_.Id);
+			steRefs.Add(state.Id);
 		}
 		public static string GetRef(int id)
 		{
@@ -113,53 +115,32 @@ namespace OVALObjects
 			definitions.Add(newDefinition);
 			defId++;
 		}
-		public Criteria CreateCriteria(AllVersionsInfo info)
+		private List<Criterion> CreateCriterionSet(List<string> versions, string operation)
+		{
+			List<Criterion> response = new();
+			foreach (string version in versions)
+			{
+				State state = new(operation, version, steId++);
+				states.Add(state);
+				tests.Add(new(tstId, "all", object_, state));
+				response.Add(new(tstId++));
+			}
+			return response;
+		}
+		private Criteria CreateCriteria(AllVersionsInfo info)
 		{
 			Criteria newCriteria = new("AND");
 			Criteria NotAffectedCriteria = new("OR");
 			Criteria AffectedCriteria = new("OR");
 			foreach (var versionInfo in info.notAffected)
 			{
-				foreach (var version in versionInfo.From)
-				{
-					State newState = new("less than", version, steId);
-					Test newTest = new(tstId, "all");
-					newTest.AddObject(object_);
-					newTest.AddState(newState);
-					states.Add(newState);
-					tests.Add(newTest);
-					NotAffectedCriteria.AddCriterion(new(tstId));
-					steId++;
-					tstId++;
-				}
+				NotAffectedCriteria.AddCriterions(CreateCriterionSet(versionInfo.From, "less than"));
 			}
 			foreach (var versionInfo in info.affected)
 			{
 				Criteria AffectedCriteriaElem = new("AND");
-				foreach (var versionFrom in versionInfo.From)
-				{
-					State newState = new("greater than or equal", versionFrom, steId);
-					Test newTest = new(tstId, "all");
-					newTest.AddObject(object_);
-					newTest.AddState(newState);
-					states.Add(newState);
-					tests.Add(newTest);
-					AffectedCriteriaElem.AddCriterion(new(tstId));
-					tstId++;
-					steId++;
-				}
-				foreach (var versionTo in versionInfo.To)
-				{
-					State newState = new("less than", versionTo, steId);
-					Test newTest = new(tstId, "all");
-					newTest.AddObject(object_);
-					newTest.AddState(newState);
-					states.Add(newState);
-					tests.Add(newTest);
-					AffectedCriteriaElem.AddCriterion(new(tstId));
-					tstId++;
-					steId++;
-				}
+				AffectedCriteriaElem.AddCriterions(CreateCriterionSet(versionInfo.From, "greater than or equal"));
+				AffectedCriteriaElem.AddCriterions(CreateCriterionSet(versionInfo.To, "less than or equal"));
 				AffectedCriteria.AddChild(AffectedCriteriaElem);
 			}
 			newCriteria.AddChild(AffectedCriteria);

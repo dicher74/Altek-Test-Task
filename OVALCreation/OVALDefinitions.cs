@@ -25,6 +25,13 @@ namespace OVALObjects
 		{
 			children.Add(child);
 		}
+		public void AddCriterions(List<Criterion> criterions)
+		{
+			foreach (var criterion in criterions)
+			{
+				AddCriterion(criterion);
+			}
+		}
 		public void AddCriterion(Criterion criterion)
 		{
 			criterions.Add(criterion);
