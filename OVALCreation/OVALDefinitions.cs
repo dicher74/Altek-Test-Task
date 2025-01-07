@@ -29,7 +29,7 @@ namespace OVALObjects
 		{
 			criterions.Add(criterion);
 		}
-		public bool isEmpty()
+		private bool IsEmpty()
 		{
 			if (criterions.Count > 0)
 			{
@@ -37,7 +37,7 @@ namespace OVALObjects
 			}
 			foreach (var child in children)
 			{
-				if (!child.isEmpty())
+				if (!child.IsEmpty())
 				{
 					return false;
 				}
@@ -46,7 +46,7 @@ namespace OVALObjects
 		}
 		public string GetXml()
 		{
-			if (isEmpty())
+			if (IsEmpty())
 			{
 				return "";
 			}
@@ -99,7 +99,7 @@ namespace OVALObjects
 				referncesXml.Add(@$"<reference source='CVE' ref_id='{CVEnum}' />");
 			}
 			return
-				@$"<definition id='{GetRef(Id)}' version='1' class='vulnerability'>
+				@$"<definition id='{GetRef(Id)}' version='1' class='vulnerability' result='true'>
 						<metadata>
 							<title>{title}</title>
 							<description>{description.Replace("&", "").Replace("<", "&lt;")}</description>

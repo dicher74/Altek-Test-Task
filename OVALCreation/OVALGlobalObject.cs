@@ -116,12 +116,12 @@ namespace OVALObjects
 		{
 			Criteria newCriteria = new("AND");
 			Criteria NotAffectedCriteria = new("OR");
-			Criteria AffectedCriteria = new("AND");
+			Criteria AffectedCriteria = new("OR");
 			foreach (var versionInfo in info.notAffected)
 			{
 				foreach (var version in versionInfo.From)
 				{
-					State newState = new("greater than or equal", version, steId);
+					State newState = new("less than", version, steId);
 					Test newTest = new(tstId, "all");
 					newTest.AddObject(object_);
 					newTest.AddState(newState);
@@ -134,10 +134,10 @@ namespace OVALObjects
 			}
 			foreach (var versionInfo in info.affected)
 			{
-				Criteria AffectedCriteriaElem = new("OR");
+				Criteria AffectedCriteriaElem = new("AND");
 				foreach (var versionFrom in versionInfo.From)
 				{
-					State newState = new("less than", versionFrom, steId);
+					State newState = new("greater than or equal", versionFrom, steId);
 					Test newTest = new(tstId, "all");
 					newTest.AddObject(object_);
 					newTest.AddState(newState);
@@ -149,7 +149,7 @@ namespace OVALObjects
 				}
 				foreach (var versionTo in versionInfo.To)
 				{
-					State newState = new("greater than", versionTo, steId);
+					State newState = new("less than", versionTo, steId);
 					Test newTest = new(tstId, "all");
 					newTest.AddObject(object_);
 					newTest.AddState(newState);
