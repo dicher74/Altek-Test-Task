@@ -133,13 +133,13 @@ namespace OVALObjects
 		private Criteria CreateCriteria(AllVersionsInfo info)
 		{
 			Criteria newCriteria = new("AND");
-			Criteria NotAffectedCriteria = new("AND");
+			Criteria NotAffectedCriteria = new("OR");
 			Criteria AffectedCriteria = new("OR");
 			foreach (var versionInfo in info.notAffected)
 			{
 				foreach (var version in versionInfo.From)
 				{
-					Criteria NotAffectedCriteriaElem = new("OR");
+					Criteria NotAffectedCriteriaElem = new("AND");
 
 					NotAffectedCriteriaElem.AddCriterions(CreateCriterionSet(
 					new() { BranchFinder.FindBranchForSingleVersion(version, versionInfo.From) }, "greater than or equal"));

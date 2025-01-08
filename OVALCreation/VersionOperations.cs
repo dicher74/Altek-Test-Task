@@ -22,10 +22,10 @@ namespace VersionOperations
 				@$"{versionParts[0]}\.\d+\.\d+"
 			};
 			List<string> possibleBranches = new() {
-				$"{versionParts[0]}.{int.Parse(versionParts[1]) + 1}.0",
-				$"{int.Parse(versionParts[0]) + 1}.0.0"
+				$"{versionParts[0]}.{versionParts[1]}.0",
+				$"{versionParts[0]}.0.0"
 			};
-			string bestBranch = @$"{versionParts[0]}\.{versionParts[1]}\.{int.Parse(versionParts[2]) + 1}";
+			string bestBranch = @$"{versionParts[0]}\.{versionParts[1]}\.{versionParts[2]}";
 			for (int index = 0; index < versionPartsPatterns.Count; index++)
 			{
 				Regex regex = new(versionPartsPatterns[index]);
