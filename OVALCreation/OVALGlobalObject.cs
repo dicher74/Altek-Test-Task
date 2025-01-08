@@ -132,23 +132,23 @@ namespace OVALObjects
 		}
 		private Criteria CreateCriteria(AllVersionsInfo info)
 		{
-			Criteria newCriteria = new("AND");
-			Criteria NotAffectedCriteria = new("AND");
+			// Criteria newCriteria = new("AND");
+			// Criteria NotAffectedCriteria = new("AND");
 			Criteria AffectedCriteria = new("OR");
-			foreach (var versionInfo in info.notAffected)
-			{
-				foreach (var version in versionInfo.From)
-				{
-					Criteria NotAffectedCriteriaElem = new("OR");
+			// foreach (var versionInfo in info.notAffected)
+			// {
+			// 	foreach (var version in versionInfo.From)
+			// 	{
+			// 		Criteria NotAffectedCriteriaElem = new("OR");
 
-					NotAffectedCriteriaElem.AddCriterions(CreateCriterionSet(
-					new() { BranchFinder.FindBranchForSingleVersion(version, versionInfo.From) }, "greater than or equal"));
+			// 		NotAffectedCriteriaElem.AddCriterions(CreateCriterionSet(
+			// 		new() { BranchFinder.FindBranchForSingleVersion(version, versionInfo.From) }, "greater than or equal"));
 
-					NotAffectedCriteriaElem.AddCriterions(CreateCriterionSet(
-						new() { version }, "less than"));
-					NotAffectedCriteria.AddChild(NotAffectedCriteriaElem);
-				}
-			}
+			// 		NotAffectedCriteriaElem.AddCriterions(CreateCriterionSet(
+			// 			new() { version }, "less than"));
+			// 		NotAffectedCriteria.AddChild(NotAffectedCriteriaElem);
+			// 	}
+			// }
 			foreach (var versionInfo in info.affected)
 			{
 				Criteria AffectedCriteriaElem = new("AND");
@@ -156,9 +156,9 @@ namespace OVALObjects
 				AffectedCriteriaElem.AddCriterions(CreateCriterionSet(versionInfo.To, "less than or equal"));
 				AffectedCriteria.AddChild(AffectedCriteriaElem);
 			}
-			newCriteria.AddChild(AffectedCriteria);
-			newCriteria.AddChild(NotAffectedCriteria);
-			return newCriteria;
+			// newCriteria.AddChild(AffectedCriteria);
+			// newCriteria.AddChild(NotAffectedCriteria);
+			return AffectedCriteria;
 		}
 		public string GetXml()
 		{
